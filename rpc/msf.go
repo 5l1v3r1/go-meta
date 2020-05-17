@@ -77,3 +77,59 @@ type InfoRes struct {
 	References  []string `msgpack:"references"`
 	Authors     []string `msgpack:"authors"`
 }
+
+// Joblist serializes data into msgpack fmt
+type Joblist struct {
+	_msgpack struct{} `msgpack:",asArray"`
+	Method   string
+	Token    string
+}
+
+// JoblistRes returns active jobs
+type JoblistRes struct {
+	JLID string `msgpack:"jlid"`
+}
+
+// JobInfo serializes data into msgpack format
+type JobInfo struct {
+	_msgpack struct{} `msgpack:",asArray"`
+	Method   string
+	Token    string
+	JobID    string
+}
+
+// JobRes holds responses for Job info method
+type JobRes struct {
+	JID                   int      `msgpack:"jid"`
+	Name                  string   `msgpack:"name"`
+	StartTime             uint64   `msgpack:"start_time"`
+	URIPath               string   `msgpack:"uri_path"`
+	DataStore             []string `msgpack:",omitempty"`
+	EnableContextEncoding bool     `msgpack:"EnableContextEncoding"`
+	DisablePayloadHandler bool     `msgpack:"DisablePayloadHandler"`
+	SSL                   bool     `msgpack:"ssl"`
+	SSLVersion            string   `msgpack:"SSLVersion"`
+	SRVHost               string   `msgpack:"SRVHOST"`
+	SRVPort               string   `msgpack:"SRVPORT"`
+	PayLoad               string   `msgpack:"PAYLOAD"`
+	LHost                 string   `msgpack:"LHOST"`
+	LPort                 string   `msgpack:"LPORT"`
+}
+
+// MSPLOIT holds config/auth info
+type MSPLOIT struct {
+	host  string
+	user  string
+	pass  string
+	token string
+}
+
+// New function to create new struct populating user/auth fields
+func New(host, user, pass string) *MSPLOIT {
+	msf := &MSPLOIT{
+		host: host,
+		user: user,
+		pass: pass,
+	}
+	return msf
+}
