@@ -1,5 +1,13 @@
 package msf
 
+import (
+	"bytes"
+	"fmt"
+	"net/http"
+
+	"gopkg.in/vmihailenco/msgpack.v2"
+)
+
 // loginReq serializes data to likeable format mor msgpack
 type loginReq struct {
 	_msgpack struct{} `msgpack:",asArray"`
@@ -132,4 +140,21 @@ func New(host, user, pass string) *MSPLOIT {
 		pass: pass,
 	}
 	return msf
+}
+
+func (msf *MSPLOIT) send(req interface{}, res interface{}) error {
+	buf := new(bytes.Buffer)
+	msgpack.NewEncoder(buf).Encode(req)
+	dest := fmt.Sprintf("http://%s/api", msf.host)
+	rp, err := http.Post(dest, "binary/message-pack", buf)
+	if err != nil {
+		return err
+	}
+	defer rp.Body.Close()
+
+	if err := msgpack.NewDecoder(rp.Body).Decode(&res); err != nil {
+		return err
+	}
+	return nil
+
 }
