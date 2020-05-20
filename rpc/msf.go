@@ -133,13 +133,17 @@ type MSPLOIT struct {
 }
 
 // New function to create new struct populating user/auth fields
-func New(host, user, pass string) *MSPLOIT {
+func New(host, user, pass string) (*MSPLOIT, error) {
 	msf := &MSPLOIT{
 		host: host,
 		user: user,
 		pass: pass,
 	}
-	return msf
+
+	if err := msf.Login(); err != nil {
+		return nil, err
+	}
+	return msf, nil
 }
 
 func (msf *MSPLOIT) send(req interface{}, res interface{}) error {
