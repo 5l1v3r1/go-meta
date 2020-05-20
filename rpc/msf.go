@@ -158,3 +158,44 @@ func (msf *MSPLOIT) send(req interface{}, res interface{}) error {
 	return nil
 
 }
+
+func (msf *MSPLOIT) Login() error {
+	ctx := &loginReq{
+		Method: "auth.login",
+		Username: msf.user,
+		Password: msf.pass
+	}
+	var res loginRes
+	if err := msf.send(ctx, &res); err != nil {
+		return err
+	}
+	msf.token = res.Token
+	return nil
+}
+
+func (msf *MSPLOIT) Logout() error {
+	ctx := logoutReq{
+		Method: "auth.logout",
+		Token: msf.token,
+		LogoutToken: msf.token,
+	}
+	var res logoutRes
+	if err := msf.send(ctx, &res); err != nil {
+		return err
+	}
+	msf.token = ""
+	return nil
+}
+
+func (msf *MSPLOIT) SessionList() (map[uint32]SessionList, error) {
+	req := &SessionList(Method: "session.list", Token: msf.token)
+	res := make(map[uint32]SessionList)
+	if err := msf.send(req, &res); err != nil {
+		return nil, err
+	}
+	for id, session := range res {
+		session.ID = id
+		res[id] = session
+	}
+	return res, nil
+}
