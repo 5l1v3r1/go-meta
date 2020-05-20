@@ -40,8 +40,8 @@ type logoutRes struct {
 	ErrorMessage string `msgpack:"error_message"`
 }
 
-// Struct to change data to MSGPack format
-type listReq struct {
+// ListReq Struct to change data to MSGPack format
+type ListReq struct {
 	_msgpack struct{} `msgpack:",asArray"`
 	Method   string
 	Token    string
@@ -161,9 +161,9 @@ func (msf *MSPLOIT) send(req interface{}, res interface{}) error {
 
 func (msf *MSPLOIT) Login() error {
 	ctx := &loginReq{
-		Method: "auth.login",
+		Method:   "auth.login",
 		Username: msf.user,
-		Password: msf.pass
+		Password: msf.pass,
 	}
 	var res loginRes
 	if err := msf.send(ctx, &res); err != nil {
@@ -175,8 +175,8 @@ func (msf *MSPLOIT) Login() error {
 
 func (msf *MSPLOIT) Logout() error {
 	ctx := logoutReq{
-		Method: "auth.logout",
-		Token: msf.token,
+		Method:      "auth.logout",
+		Token:       msf.token,
 		LogoutToken: msf.token,
 	}
 	var res logoutRes
@@ -187,9 +187,9 @@ func (msf *MSPLOIT) Logout() error {
 	return nil
 }
 
-func (msf *MSPLOIT) SessionList() (map[uint32]SessionList, error) {
-	req := &SessionList(Method: "session.list", Token: msf.token)
-	res := make(map[uint32]SessionList)
+func (msf *MSPLOIT) SessionList() (map[uint32]ListRes, error) {
+	req := &ListReq{Method: "session.list", Token: msf.token}
+	res := make(map[uint32]ListRes)
 	if err := msf.send(req, &res); err != nil {
 		return nil, err
 	}
